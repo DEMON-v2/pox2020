@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  main:
+    build: ./images/poxintranet
+    container_name: poxintranet
+    volumes:
+      - "./src/poxintranet:/var/www/html"
+    ports:
+      - 8018:80
+    networks:
+      poxintranet:
+        ipv4_address: 172.19.0.3
+    restart: always
+
+  db:
+    build: ./images/poxintranet/mysql
+    container_name: poxintranet_db
+    environment:
+      MYSQL_ROOT_PASSWORD: "demonpox2020#@!"
+      MYSQL_USER: "poxuser"
+      MYSQL_PASSWORD: "demonpox2020#@!"
+      MYSQL_DATABASE: "poxintranet"
+    volumes:
+      - "./env/mysql/:/docker-entrypoint-initdb.d/"
+    ports:
+      - 3308:3308
+    networks:
+      poxintranet:
+        ipv4_address: 172.19.0.4
+    restart: always
+  
+networks:
+  poxintranet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16
